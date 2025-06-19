@@ -2,16 +2,17 @@ from telethon import TelegramClient, events
 import smtplib
 from email.mime.text import MIMEText
 from dotenv import load_dotenv
+from telethon.sessions import StringSession
 import os
+import asyncio
 
 # Carregar variáveis do .env
 load_dotenv()
 
 # Telegram
-print(("API_ID:", os.getenv("API_ID")))
 api_id = int(os.getenv("API_ID"))
 api_hash = os.getenv("API_HASH")
-phone_number = os.getenv("PHONE_NUMBER")
+session_string = os.getenv("SESSION_STRING")
 frase_chave = "Nintendo Switch 2"
 
 # E-mail
@@ -35,7 +36,7 @@ def enviar_email(mensagem):
         print(f"Erro ao enviar e-mail: {e}")
 
 # Criar cliente do Telegram
-client = TelegramClient('monitor', api_id, api_hash)
+client = TelegramClient(StringSession(session_string), api_id, api_hash)
 
 @client.on(events.NewMessage)
 async def monitorar_mensagem(event):
@@ -43,7 +44,12 @@ async def monitorar_mensagem(event):
         print(f"🔍 Frase detectada: {event.raw_text}")
         enviar_email(f"Mensagem encontrada no Telegram:\n\n{event.raw_text}")
 
-print("✅ Iniciando monitoramento...")
-client.start(phone=phone_number)
-print("🔔 Monitoramento iniciado. Aguardando mensagens...")
-client.run_until_disconnected()
+# Função principal assíncrona
+async def main():
+    print("✅ Conectando ao Telegram...")
+    await client.start()  # ESSENCIAL para conectar corretamente
+    print("🔔 Monitoramento iniciado. Aguardando mensagens...")
+    await client.run_until_disconnected()
+
+# Início do programa
+asyncio.run(main())
