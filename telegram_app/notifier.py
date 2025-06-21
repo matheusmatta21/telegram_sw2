@@ -47,7 +47,7 @@ async def monitorar_mensagem(event):
 # Função principal assíncrona
 async def main():
     print("✅ Conectando ao Telegram...")
-    await client.start()  # ESSENCIAL para conectar corretamente
+    await client.connect()  
     print("🔔 Monitoramento iniciado. Aguardando mensagens...")
     await client.run_until_disconnected()
 
