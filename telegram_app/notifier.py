@@ -13,7 +13,7 @@ load_dotenv()
 api_id = int(os.getenv("API_ID"))
 api_hash = os.getenv("API_HASH")
 session_string = os.getenv("SESSION_STRING")
-frase_chave = "Nintendo Switch 2"
+frase_chave = ["Nintendo Switch 2", "Mario Kart World", "Animal Crossing: New Horizons", "Donkey Kong Bananza", "Pokémon Legends Z-A", "Sonic X Shadow Generations"]
 
 # E-mail
 email_origem = os.getenv("EMAIL_ORIGEM")
@@ -40,9 +40,14 @@ client = TelegramClient(StringSession(session_string), api_id, api_hash)
 
 @client.on(events.NewMessage)
 async def monitorar_mensagem(event):
-    if frase_chave.lower() in event.raw_text.lower():
-        print(f"🔍 Frase detectada: {event.raw_text}")
-        enviar_email(f"Mensagem encontrada no Telegram:\n\n{event.raw_text}")
+    # if frase_chave.lower() in event.raw_text.lower():
+    #     print(f"🔍 Frase detectada: {event.raw_text}")
+    #     enviar_email(f"Mensagem encontrada no Telegram:\n\n{event.raw_text}")
+    for frase in frase_chave:
+        if frase.lower() in event.raw_text.lower():
+            print(f"🔍 Frase detectada: {event.raw_text}")
+            enviar_email(f"Mensagem encontrada no Telegram:\n\n{event.raw_text}")
+            break
 
 # Função principal assíncrona
 async def main():
